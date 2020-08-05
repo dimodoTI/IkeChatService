@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ChatApi.Helpers;
 using MediatR;
+using webSocket;
 
 
 namespace ChatApi
@@ -36,6 +37,7 @@ namespace ChatApi
             services.AddAuthorization();
             services.AddControllers();
             services.AddOData();
+            services.AddSingleton<IWebSocketWrapper, WebSocketWrapper>(x => new WebSocketWrapper("wss://ws.chat.dimodo.ga:9080"));
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);

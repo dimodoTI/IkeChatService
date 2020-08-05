@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using ChatApi.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Authorization;
+using webSocket;
+using System.Text.Json;
 
 namespace ChatApi.Controllers
 {
@@ -18,11 +20,26 @@ namespace ChatApi.Controllers
     public class ChatController : ControllerBase
     {
         private readonly ChatContext _context;
+        private readonly IWebSocketWrapper _webSocketWrapper = null;
 
+        string _openMessage = JsonSerializer.Serialize(new { type = "new-connection", id = "ike", rol = "ike", name = "ike" });
 
-        public ChatController(ChatContext context)
+        public ChatController(ChatContext context, IWebSocketWrapper webSocketWrapper)
         {
             _context = context;
+
+            _webSocketWrapper = webSocketWrapper;
+
+            _webSocketWrapper.OnConnect(
+               wrapper =>
+               {
+
+                   wrapper.SendMessage(_openMessage);
+               });
+
+            // _webSocketWrapper.OnDisconnect(wrapper => _logger.LogInformation("desconectado"));
+
+            //_webSocketWrapper.OnMessage((message, wrapper) => _logger.LogInformation(message));
 
         }
 
@@ -109,6 +126,12 @@ namespace ChatApi.Controllers
             _context.Chat.Add(chat);
 
             await _context.SaveChangesAsync();
+
+            //string refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "vet", action = "REFRESH" });
+
+            //string refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "cli",toId="1234", action = "REFRESH" });
+
+            //_webSocketWrapper.SendMessage(refreshMessage);
 
             return Ok();
         }
