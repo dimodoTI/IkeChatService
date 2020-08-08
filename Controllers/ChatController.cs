@@ -124,29 +124,35 @@ namespace ChatApi.Controllers
 
         [HttpPost]
 
-        public async Task<ActionResult<Chat>> Post(Chat chat)
+        public async Task<ActionResult<Chat>> Post(Mensaje mensaje)
         {
 
 
             string rols = _permissions.getUserRol(this.User);
 
-            chat.UsuarioId = _permissions.getUserId(this.User); ;
+            mensaje.Chat.UsuarioId = _permissions.getUserId(this.User); ;
 
             Reservas reserva;
 
             string refreshMessage = "";
 
-            if (rols.Contains("veterinario"))
+            Chat preguntaOriginal = null;
+
+            if (mensaje.PreguntaId != 0)
             {
-                reserva = _context.Reservas.FirstOrDefault(r => r.Id == chat.ReservaId);
+                reserva = _context.Reservas.FirstOrDefault(r => r.Id == mensaje.Chat.ReservaId);
 
                 if (reserva == null) return NotFound();
+
+                preguntaOriginal = _context.Chat.FirstOrDefault(c => c.Id == mensaje.PreguntaId);
+
+                if (preguntaOriginal != null) preguntaOriginal.Respondido = DateTime.Now.Ticks;
 
                 refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "cli", toId = reserva.UsuarioId, action = "REFRESH" });
             }
             else
             {
-                reserva = _context.Reservas.FirstOrDefault(r => r.Id == chat.ReservaId && r.UsuarioId == chat.UsuarioId);
+                reserva = _context.Reservas.FirstOrDefault(r => r.Id == mensaje.Chat.ReservaId && r.UsuarioId == mensaje.Chat.UsuarioId);
 
                 if (reserva == null) return NotFound();
 
@@ -154,7 +160,7 @@ namespace ChatApi.Controllers
             };
 
 
-            _context.Chat.Add(chat);
+            _context.Chat.Add(mensaje.Chat);
 
             await _context.SaveChangesAsync();
 
@@ -188,6 +194,12 @@ namespace ChatApi.Controllers
             return _context.Chat.Any(e => e.Id == id);
         }
 
+    }
+
+    public class Mensaje
+    {
+        public Chat Chat { get; set; }
+        public int PreguntaId { get; set; }
     }
 
 }
