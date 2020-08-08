@@ -4,14 +4,16 @@ using ChatApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChatApi.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    partial class ChatContextModelSnapshot : ModelSnapshot
+    [Migration("20200808144903_usuarios")]
+    partial class usuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,14 +31,14 @@ namespace ChatApi.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Leido")
-                        .HasColumnType("bit");
+                    b.Property<int>("Leido")
+                        .HasColumnType("int");
 
                     b.Property<int>("ReservaId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Respondido")
-                        .HasColumnType("bit");
+                    b.Property<int>("Respondido")
+                        .HasColumnType("int");
 
                     b.Property<string>("Texto")
                         .HasColumnType("nvarchar(max)");

@@ -17,6 +17,7 @@ namespace ChatApi.Models
         public int Calificacion { get; set; }
         public String ComentarioCalificacion { get; set; }
         public bool Activo { get; set; }
+        public List<Chat> chats { get; set; }
 
 
     }

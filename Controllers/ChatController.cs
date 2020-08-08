@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Authorization;
 using webSocket;
 using System.Text.Json;
+using ChatApi.Helpers;
+
 
 namespace ChatApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+
 
     public class ChatController : ControllerBase
     {
@@ -24,9 +26,13 @@ namespace ChatApi.Controllers
 
         string _openMessage = JsonSerializer.Serialize(new { type = "new-connection", id = "ike", rol = "ike", name = "ike" });
 
+        private readonly Permissions _permissions;
+
         public ChatController(ChatContext context, IWebSocketWrapper webSocketWrapper)
         {
             _context = context;
+
+            _permissions = new Permissions();
 
             _webSocketWrapper = webSocketWrapper;
 
@@ -117,11 +123,26 @@ namespace ChatApi.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
 
         public async Task<ActionResult<Chat>> Post(Chat chat)
         {
 
+
+            chat.UsuarioId = _permissions.getUserId(this.User); ;
+
+            Reservas reserva;
+
+            if (_permissions.getUserRol(this.User) == "veterinario")
+            {
+                reserva = _context.Reservas.FirstOrDefault(r => r.Id == chat.ReservaId);
+            }
+            else
+            {
+                reserva = _context.Reservas.FirstOrDefault(r => r.Id == chat.ReservaId && r.UsuarioId == chat.UsuarioId);
+            };
+
+
+            if (reserva == null) return NotFound();
 
             _context.Chat.Add(chat);
 
