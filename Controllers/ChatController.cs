@@ -128,31 +128,37 @@ namespace ChatApi.Controllers
         {
 
 
+            string rols = _permissions.getUserRol(this.User);
+
             chat.UsuarioId = _permissions.getUserId(this.User); ;
 
             Reservas reserva;
 
-            if (_permissions.getUserRol(this.User) == "veterinario")
+            string refreshMessage = "";
+
+            if (rols.Contains("veterinario"))
             {
                 reserva = _context.Reservas.FirstOrDefault(r => r.Id == chat.ReservaId);
+
+                if (reserva == null) return NotFound();
+
+                refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "cli", toId = reserva.UsuarioId, action = "REFRESH" });
             }
             else
             {
                 reserva = _context.Reservas.FirstOrDefault(r => r.Id == chat.ReservaId && r.UsuarioId == chat.UsuarioId);
+
+                if (reserva == null) return NotFound();
+
+                refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "vet", action = "REFRESH" });
             };
 
-
-            if (reserva == null) return NotFound();
 
             _context.Chat.Add(chat);
 
             await _context.SaveChangesAsync();
 
-            //string refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "vet", action = "REFRESH" });
-
-            //string refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "cli",toId="1234", action = "REFRESH" });
-
-            //_webSocketWrapper.SendMessage(refreshMessage);
+            _webSocketWrapper.SendMessage(refreshMessage);
 
             return Ok();
         }
