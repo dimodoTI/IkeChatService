@@ -99,6 +99,7 @@ namespace ChatApi
             var odataBuilder = new ODataConventionModelBuilder();
             odataBuilder.EntitySet<Chat>("ChatQuery");
             odataBuilder.EntitySet<Reservas>("ResevasQuery");
+            odataBuilder.EntitySet<Mascotas>("MascotasQuery");
 
 
             return odataBuilder.GetEdmModel();

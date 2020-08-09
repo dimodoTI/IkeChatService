@@ -12,6 +12,7 @@ namespace ChatApi.Models
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Reservas> Reservas { get; set; }
         public DbSet<Usuarios> Usuarios { get; set; }
+        public DbSet<Mascotas> Mascotas { get; set; }
 
 
 
