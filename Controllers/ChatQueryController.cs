@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ChatApi.Models;
 using Microsoft.AspNet.OData;
 
-namespace MascotasApi.Controllers
+namespace ChatApi.Controllers
 {
 
     public class ChatQueryController : ControllerBase
