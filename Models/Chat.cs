@@ -12,6 +12,7 @@ namespace ChatApi.Models
         public int ReservaId { get; set; }
         public int UsuarioId { get; set; }
         public string Texto { get; set; }
+        public bool EsPregunta { get; set; }
         public long Leido { get; set; }
         public long Respondido { get; set; }
         public Reservas Reserva { get; set; }
