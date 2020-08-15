@@ -37,12 +37,15 @@ namespace ChatApi
             services.AddAuthorization();
             services.AddControllers();
             services.AddOData();
-            services.AddSingleton<IWebSocketWrapper, WebSocketWrapper>(x => new WebSocketWrapper("wss://ws.chat.dimodo.ga:9080"));
+            //services.AddSingleton<IWebSocketWrapper, WebSocketWrapper>(x => new WebSocketWrapper("wss://ws.chat.dimodo.ga:9080"));
+
+
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var ChatServer = appSettings.ChatServer;
 
             services.AddAuthentication(x =>
             {
@@ -62,6 +65,8 @@ namespace ChatApi
                 };
             });
 
+            services.AddSingleton<IWebSocketWrapper, WebSocketWrapper>(x => new WebSocketWrapper(ChatServer));
+
             services.AddDbContext<ChatContext>(opt =>
                             opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -75,7 +80,7 @@ namespace ChatApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

@@ -39,7 +39,9 @@ namespace webSocket
 
         public WebSocketWrapper(string uri)
         {
+
             _ws = new ClientWebSocket();
+            _ws.Options.RemoteCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
             _ws.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
             _uri = new Uri(uri);
             _cancellationToken = _cancellationTokenSource.Token;
