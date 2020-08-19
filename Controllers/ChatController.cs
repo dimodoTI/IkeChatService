@@ -51,7 +51,6 @@ namespace ChatApi.Controllers
 
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> Put(int id, [FromBody] Chat chat)
         {
@@ -83,7 +82,6 @@ namespace ChatApi.Controllers
 
 
         [HttpPatch("{id}")]
-        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Chat> chatPatch)
         {

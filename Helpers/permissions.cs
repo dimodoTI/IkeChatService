@@ -9,23 +9,42 @@ namespace ChatApi.Helpers
         {
 
             int idUsuario;
-            string rolUsuario = currentUser.Claims.First(r => r.Type == ClaimTypes.Role).Value;
+
+            Claim rolUsuario = currentUser.Claims.FirstOrDefault(r => r.Type == ClaimTypes.Role);
+
+            if (rolUsuario == null) return false;
+
             var res = int.TryParse(currentUser.Identity.Name, out idUsuario);
 
-            return (rolUsuario == "Admin" || IdOwner == idUsuario);
+            return (rolUsuario.Value == "Admin" || IdOwner == idUsuario);
 
         }
         public bool isAdmin(ClaimsPrincipal currentUser)
         {
 
-            string rolUsuario = currentUser.Claims.First(r => r.Type == ClaimTypes.Role).Value;
+            Claim rolUsuario = currentUser.Claims.FirstOrDefault(r => r.Type == ClaimTypes.Role);
 
-            return rolUsuario == "Admin";
+            if (rolUsuario == null) return false;
+
+            return rolUsuario.Value == "Admin";
+
+        }
+
+        public bool isInRol(ClaimsPrincipal currentUser, string rol)
+        {
+
+            Claim rolUsuario = currentUser.Claims.FirstOrDefault(r => r.Type == ClaimTypes.Role);
+
+            if (rolUsuario == null) return false;
+
+
+            return rolUsuario.Value.ToUpper().Split(" ").Contains(rol.ToUpper());
 
         }
 
         public int getUserId(ClaimsPrincipal currentUser)
         {
+
             int idUsuario;
             var res = int.TryParse(currentUser.Identity.Name, out idUsuario);
             return idUsuario;
@@ -33,9 +52,12 @@ namespace ChatApi.Helpers
 
         public string getUserRol(ClaimsPrincipal currentUser)
         {
-            string rolUsuario = currentUser.Claims.First(r => r.Type == ClaimTypes.Role).Value;
 
-            return rolUsuario;
+            Claim rolUsuario = currentUser.Claims.FirstOrDefault(r => r.Type == ClaimTypes.Role);
+
+            if (rolUsuario == null) return "";
+
+            return rolUsuario.Value;
         }
 
 

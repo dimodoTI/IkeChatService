@@ -4,14 +4,16 @@ using ChatApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChatApi.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    partial class ChatContextModelSnapshot : ModelSnapshot
+    [Migration("20200819215525_notificaciones")]
+    partial class notificaciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,7 +139,7 @@ namespace ChatApi.Migrations
                     b.Property<long>("Leido")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("MascotaId")
+                    b.Property<int>("MascotaId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -265,7 +267,9 @@ namespace ChatApi.Migrations
 
                     b.HasOne("ChatApi.Models.Mascotas", "Mascota")
                         .WithMany()
-                        .HasForeignKey("MascotaId");
+                        .HasForeignKey("MascotaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ChatApi.Models.Reservas", b =>
