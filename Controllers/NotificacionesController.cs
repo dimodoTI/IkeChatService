@@ -57,19 +57,60 @@ namespace ChatApi.Controllers
 
             notificacion.Fecha = DateTime.Now;
 
+            if (notificacion.UsuarioId == 0) return NotFound();
+
             _context.NotificacionCabecera.Add(notificacion);
 
             await _context.SaveChangesAsync();
 
             notificacion.Detalle.ForEach((det) =>
             {
-                string refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "cli", toId = det.ClienteId, action = "REFRESH_NOTIFICACION" });
+                string refreshMessage = JsonSerializer.Serialize(new { type = "do-action", toRol = "todos", toId = det.ClienteId, action = "REFRESH_NOTIFICACION" });
 
                 _webSocketWrapper.SendMessage(refreshMessage);
 
             });
 
             return Ok();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<NotificacionDetalle> detallePatch)
+        {
+
+            NotificacionDetalle detalle = await _context.NotificacionDetalle.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (detalle == null)
+            {
+                return NotFound();
+            }
+
+            detallePatch.ApplyTo(detalle);
+
+            _context.Entry(detalle).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpPost("Leido({id})")]
+        public async Task<IActionResult> Leido(int id)
+        {
+
+            NotificacionDetalle detalle = await _context.NotificacionDetalle.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (detalle == null)
+            {
+                return NotFound();
+            }
+
+            detalle.Leido = DateTime.Now.Ticks;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
 

@@ -105,6 +105,9 @@ namespace ChatApi
             odataBuilder.EntitySet<Chat>("ChatQuery");
             odataBuilder.EntitySet<Reservas>("ResevasQuery");
             odataBuilder.EntitySet<Mascotas>("MascotasQuery");
+            odataBuilder.EntitySet<NotificacionCabecera>("NotificacionCabeceraQuery");
+            odataBuilder.EntitySet<NotificacionDetalle>("NotificacionDetalleQuery");
+
 
 
             return odataBuilder.GetEdmModel();
